@@ -5,28 +5,39 @@
 };
 
 &kscan0 {
-        col-gpios
-            = <&xiao_d 10 GPIO_ACTIVE_HIGH>
-            , <&xiao_d 9 GPIO_ACTIVE_HIGH> 
-            , <&xiao_d 8 GPIO_ACTIVE_HIGH> 
-            , <&xiao_d 7 GPIO_ACTIVE_HIGH> 
-            , <&gpio0 10 GPIO_ACTIVE_HIGH>
-            ;
+    col-gpios =
+        <&xiao_d 10 GPIO_ACTIVE_HIGH>,
+        <&xiao_d 9 GPIO_ACTIVE_HIGH>,
+        <&xiao_d 8 GPIO_ACTIVE_HIGH>,
+        <&xiao_d 7 GPIO_ACTIVE_HIGH>,
+        <&gpio0 10 GPIO_ACTIVE_HIGH>;
 };
 
 / {
     trackball_listener {
         compatible = "zmk,input-listener";
         device = <&trackball>;
-
     };
+
+    // TTP223用のカスタムビヘイビアを定義（タッチ中のみLayer 4を有効にする）
+    behaviors {
+        ttp223_trigger: ttp223_trigger {
+            compatible = "zmk,behavior-hold-tap";
+            bindings = <&mo 4>, <&none>;
+            tapping-term-ms = <0>;
+            label = "TTP223_HOLD_LAYER";
+        };
+    };
+
+    // TTP223（P1.10）をGPIOキーとして定義し、上記ビヘイビアをバインドする
     gpio_keys {
         compatible = "gpio-keys";
 
         ttp223_sw: ttp223_sw {
             gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
             label = "TTP223_P1_10";
-            linux,code = <KEY_F24>;
+            linux,code = <KEY_F24>; // 必要に応じて KEY_PROG1 や KEY_MACRO1 に変更可能
+            bindings = <&ttp223_trigger>;
         };
     };
 };
@@ -35,22 +46,24 @@
     spi0_default: spi0_default {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 0, 5)>,
-                <NRF_PSEL(SPIM_MOSI, 0, 4)>,
-                <NRF_PSEL(SPIM_MISO, 0, 4)>;
+                    <NRF_PSEL(SPIM_MOSI, 0, 4)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 4)>;
         };
     };
 
     spi0_sleep: spi0_sleep {
         group1 {
             psels = <NRF_PSEL(SPIM_SCK, 0, 5)>,
-                <NRF_PSEL(SPIM_MOSI, 0, 4)>,
-                <NRF_PSEL(SPIM_MISO, 0, 4)>;
+                    <NRF_PSEL(SPIM_MOSI, 0, 4)>,
+                    <NRF_PSEL(SPIM_MISO, 0, 4)>;
             low-power-enable;
         };
     };
 };
 
-&xiao_serial { status = "disabled"; };
+&xiao_serial {
+    status = "disabled";
+};
 
 &spi0 {
     status = "okay";
@@ -70,5 +83,3 @@
         scroll-layers = <5>;
     };
 };
-
-
