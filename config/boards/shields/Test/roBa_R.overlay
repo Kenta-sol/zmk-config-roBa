@@ -61,6 +61,11 @@
     };
 };
 
+// gpio1 を有効化して P1.10 を GPIO として使用可能にする
+&gpio1 {
+    status = "okay";
+};
+
 &xiao_serial {
     status = "disabled";
 };
