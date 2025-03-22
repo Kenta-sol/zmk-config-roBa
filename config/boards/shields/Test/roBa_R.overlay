@@ -34,7 +34,7 @@
         compatible = "gpio-keys";
 
         ttp223_sw: ttp223_sw {
-            gpios = <&gpio1 10 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+            gpios = <&gpio1 10 GPIO_PULL_DOWN GPIO_ACTIVE_HIGH>;
             label = "TTP223_P1_10";
             linux,code = <KEY_F24>; // 必要に応じて KEY_PROG1 や KEY_MACRO1 に変更可能
             bindings = <&ttp223_trigger>;
